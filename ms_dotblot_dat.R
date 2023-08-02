@@ -9,16 +9,22 @@ df <- read_csv("environment_dat.csv")
 #Experimental Data 
 tmp_graph<-ggplot(data = df,aes(x = day,y = temp, color = treatment ))+
   geom_line()+
-  scale_x_continuous(breaks = seq(1,14, by = 1))+
-  geom_point()
+  scale_y_continuous(name = "Temperature (C)")+
+  scale_x_continuous(name = "Experimental Day", breaks = seq(1,14, by = 1))+
+  geom_point()+
+  theme_classic2()
 
 #K-wallis test to prove there was no affect of temperature on endpoints as it was equal through both treatments
-kruskal.test(temp~treatment, data = df)
+compare_means (DO~treatment, data = df, method =  "kruskal.test")
 
 DO_graph<-ggplot(data = df, aes(x = day, y = DO, color = treatment))+
   geom_line()+
-  scale_x_continuous(breaks = seq(1,14, by = 1))+
-  geom_point()
+  scale_y_continuous(name = "Dissolved Oxygen (mg/L)")+
+  scale_x_continuous(name = "Experimental Day", breaks = seq(1,14, by = 1))+
+  geom_point()+
+  theme_classic2()+
+  annotate(geom = "text", x = 7, y = 5, label = "p-value = <.001")
+
 
 #K-wallis test to prove that DO levels /were/ significantly different 
 kruskal.test(DO~treatment, data = df)
@@ -45,7 +51,9 @@ DD_treatment<-ggbarplot(
   DD_dot, x = "Treatment", y = "DD", color = "Treatment",
   add = c("mean", "jitter"),
   position = position_dodge(.2)
-)
+) + ggtitle("DNA Damage")
+DD_treatment
+DD_treatment + labs( y = "Intensity", x = "Treatments")+theme(legend.position = "none")
 
 sym_dd<-DD_dot%>%group_by(Treatment)%>%
   filter(Symbiont == "Sym")%>%
@@ -81,7 +89,11 @@ PC_treatment<-ggbarplot(
   PC_dot, x = "Treatment", y = "PC", color = "Treatment",
   add = c("mean_se_", "jitter"),
   position = position_dodge(.7)
-)
+) +ggtitle("Protein Carbonylation")
+
+PC_treatment
+PC_treatment + labs( y = "Intensity", x = "Treatments")+theme(legend.position = "none")
+
 
 sym_pc<-PC_dot%>%group_by(Treatment)%>%
   filter(Symbiont == "Sym")%>%
@@ -109,7 +121,9 @@ PC_geno_apo<-ggbarplot(
 LP_anov<-aov(LP~Treatment+Symbiont, data = LP_dot)
 summary(LP_anov)
 
-LP_anov2<-aov(LP~Genotype+Treatment, data = apo_lp)
+#*Combination of Genotype & Treatment
+LP_anov2<-aov(LP~Genotype*Treatment, data = apo_lp)
+
 summary(LP_anov2)
 
 tukey<-TukeyHSD(LP_anov2)
@@ -118,10 +132,14 @@ tukey
 
 #Lipid peroxidation graphical representation
 LP_treatment<-ggbarplot(
-  LP_dot, x = "Treatment", y = "PC", color = "Treatment",
+  LP_dot, x = "Treatment", y = "LP", color = "Treatment",
   add = c("mean_se_", "jitter"),
   position = position_dodge(.7)
-)
+) +ggtitle("Lipid Peroxidation")
+
+LP_treatment
+LP_treatment + labs( y = "Intensity", x = "Treatments")+theme(legend.position = "none")
+
 
 sym_lp<-LP_dot%>%group_by(Treatment)%>%
   filter(Symbiont == "Sym")%>%
