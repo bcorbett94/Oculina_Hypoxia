@@ -1,0 +1,145 @@
+---
+title: "data_analysis.Rmd"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(lme4)
+library(lmerTest)
+library(lsmeans)
+```
+
+## Import data
+
+```{r}
+df <- read_csv("bryce_data.csv") %>%
+  clean_names()
+
+df <- df %>%
+  separate(treatment_group, c("ox", "sym"), sep = "/") %>%
+  mutate(ox = factor(ox, levels = c("norm",  "hyp")),
+         sym = factor(sym, levels = c("sym", "apo"))) %>%
+  rename(value = intensity)
+```
+
+
+## Lipid peroxidation
+```{r}
+lpo <- filter(df, variable == "lpo")
+
+ggplot(lpo, aes(x = interaction(sym, ox), y = value)) +
+  geom_boxplot() +
+  geom_point()
+
+# Remove outlier?
+#lpo <- filter(lpo, value < 2.5)
+
+# Two-way ANOVA
+mod <- lm(value ~ ox + sym, data = lpo)
+anova(mod)
+
+# Mixed effects model
+mod2 <- lmerTest::lmer(value ~ ox + sym + (1|genotype), data = lpo)
+anova(mod2)
+
+lsm <- lsmeans(mod2, specs = c("ox", "sym"))
+plot(lsm)
+
+ggplot(data.frame(lsm), aes(x = interaction(ox, sym), y = lsmean)) +
+  geom_point(aes(color = ox), size = 5) +
+  geom_errorbar(aes(ymin = lsmean - SE, ymax = lsmean + SE))
+```
+
+
+## DNA damage
+```{r}
+dnad <- filter(df, variable == "dnad")
+
+ggplot(dnad, aes(x = interaction(sym, ox), y = value)) +
+  geom_boxplot() +
+  geom_point()
+
+# Remove outlier? what about zero values?
+#dnad <- filter(dnad, value < 3)
+
+# Two-way ANOVA
+mod <- lm(value ~ ox + sym, data = dnad)
+anova(mod)
+
+# Mixed effects model
+mod2 <- lmerTest::lmer(value ~ ox + sym + (1|genotype), data = dnad)
+anova(mod2)
+
+lsm <- lsmeans(mod2, specs = c("ox", "sym"))
+plot(lsm)
+```
+
+
+## Protein carbonylation
+```{r}
+pcarb <- filter(df, variable == "pcarb")
+
+ggplot(pcarb, aes(x = interaction(sym, ox), y = value)) +
+  geom_boxplot() +
+  geom_point()
+
+# Remove outlier? what about zero values?
+#dnad <- filter(dnad, value < 3)
+
+# Two-way ANOVA
+mod <- lm(value ~ ox * sym, data = pcarb)
+anova(mod)
+
+
+# Mixed effects model
+mod2 <- lmerTest::lmer(value ~ ox * sym + (1|genotype), data = pcarb)
+anova(mod2)
+
+lsm <- lsmeans(mod2, specs = c("ox", "sym"))
+plot(lsm)
+```
+
+
+# Is the effect of hypoxia on LPO dependent on genotype?
+```{r}
+apo <- filter(df, sym == "apo", variable == "lpo")
+
+mod <- lm(value ~ genotype * ox, data = apo)
+anova(mod)
+
+lsm <- lsmeans(mod, specs = c("genotype", "ox"))
+plot(lsm)
+
+diffs <- contrast(lsm, method = "pairwise", by = "genotype")
+diffs
+
+
+
+
+sym <- filter(df, sym == "sym", variable == "lpo")
+
+mod <- lm(value ~ genotype * ox, data = sym)
+anova(mod)
+
+lsm <- lsmeans(mod, specs = c("genotype", "ox"))
+plot(lsm)
+
+diffs <- contrast(lsm, method = "pairwise", by = "genotype")
+diffs
+```
+
+
+
+
+```{r}
+
+```
+
+
+```{r}

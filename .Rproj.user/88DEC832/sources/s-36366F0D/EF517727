@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1690999801188.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "EF517727",
+    "lastKnownWriteTime" : 140585109367024,
+    "last_content_update" : 1690999801188,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "id" : "b090c37a357b4e518a2e860584b69585",
+        "name" : "LP_geno_sym",
+        "title" : "LP_geno_sym"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "object_explorer"
+}

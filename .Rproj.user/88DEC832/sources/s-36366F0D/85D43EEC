@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1690923772635.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "85D43EEC",
+    "lastKnownWriteTime" : 1690999641,
+    "last_content_update" : 1691004836703,
+    "path" : "~/Desktop/Important 2023/Shedd_Aquarium/Projects/Bryce_MS_23/ms_dotblot_dat.R",
+    "project_path" : "ms_dotblot_dat.R",
+    "properties" : {
+        "cursorPosition" : "34,0",
+        "scrollLine" : "22",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

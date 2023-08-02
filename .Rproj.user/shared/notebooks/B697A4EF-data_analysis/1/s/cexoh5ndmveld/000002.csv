@@ -1,0 +1,16 @@
+"0","df <- read_csv(""bryce_data.csv"") %>%"
+"0","  clean_names()"
+"2","
+[36m──[39m [1mColumn specification[22m [36m───────────────────────────────────────────────────────[39m
+cols(
+  `Treatment Group` = [31mcol_character()[39m,
+  Genotype = [31mcol_character()[39m,
+  Intensity = [32mcol_double()[39m,
+  variable = [31mcol_character()[39m
+)
+"
+"0","df <- df %>%"
+"0","  separate(treatment_group, c(""ox"", ""sym""), sep = ""/"") %>%"
+"0","  mutate(ox = factor(ox, levels = c(""norm"",  ""hyp"")),"
+"0","         sym = factor(sym, levels = c(""sym"", ""apo""))) %>%"
+"0","  rename(value = intensity)"

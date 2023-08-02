@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1690994091010.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "B9522373",
+    "lastKnownWriteTime" : 4476553171,
+    "last_content_update" : 1690994091010,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "1A64965A",
+        "caption" : "sym_dd",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=sym_dd&cache_key=1A64965A",
+        "displayedObservations" : 45,
+        "environment" : "",
+        "expression" : "sym_dd",
+        "object" : "sym_dd",
+        "preview" : 0,
+        "totalObservations" : 45,
+        "variables" : 6
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
