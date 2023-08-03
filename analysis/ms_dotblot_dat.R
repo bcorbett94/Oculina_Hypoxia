@@ -1,11 +1,4 @@
----
-title: "Graphical_thesis_dat"
-author: "Bryce Corbett"
-date: "8/2/2023"
-output: html_document
----
-
-```{r setup, include=FALSE}
+#Attempt to convert excel thesis data to r data
 library(tidyverse)
 library(ggplot2)
 library(dplyr)
@@ -33,9 +26,17 @@ DO_graph<-ggplot(data = df, aes(x = day, y = DO, color = treatment))+
   annotate(geom = "text", x = 7, y = 5, label = "p-value = <.001")
 
 
+#K-wallis test to prove that DO levels /were/ significantly different 
+kruskal.test(DO~treatment, data = df)
+
+
+
+# Beginning of graphs for Dot blot endpoints
 DD_dot<-read_csv("dot_blot_DD.csv")
 PC_dot<-read_csv("dot_blot_PC.csv")
 LP_dot<-read_csv("dot_blot_LP.csv")
+
+#******************************DD stats*********************
 
 #Does DD intensity level depend on symbiont and treatment 
 DD_anov<-aov(DD~Treatment+Symbiont, data = DD_dot)
@@ -51,8 +52,7 @@ DD_treatment<-ggbarplot(
   add = c("mean", "jitter"),
   position = position_dodge(.2)
 ) + ggtitle("DNA Damage")
-DD_treatment
-DD_treatment + labs( y = "Intensity", x = "Treatments")+theme(legend.position = "none")
+DD_treatment <-DD_treatment + labs( y = "Intensity", x = "Treatments")+theme(legend.position = "none")
 
 sym_dd<-DD_dot%>%group_by(Treatment)%>%
   filter(Symbiont == "Sym")%>%
@@ -67,20 +67,26 @@ DD_geno_sym<-ggbarplot(
   sym_dd, x ="Genotype", y = "DD",color = "Treatment",
   add = c("mean_se_", "jitter"),
   order = c("A","B","C","D","E","F","G","H","I"),
-  position = position_dodge(.7)
+  position = position_dodge(.7),
+  ylab = "Intensity"
 )
 DD_geno_sym
 DD_geno_apo<-ggbarplot(
   apo_dd, x ="Genotype", y = "DD",color = "Treatment" ,
   add = c("mean_se_", "jitter"),
   order = c("J","K","L","M","N","O","P","Q","R"),
-  position = position_dodge(.7)
+  position = position_dodge(.7),
+  ylab = "Intensity"
 )
+
+#******************************PC stats*********************
+
+# PC graphical representation
 
 PC_treatment<-ggbarplot(
   PC_dot, x = "Treatment", y = "PC", color = "Treatment",
   add = c("mean_se_", "jitter"),
-  position = position_dodge(.7)
+  position = position_dodge(.7),
 ) +ggtitle("Protein Carbonylation")
 
 PC_treatment
@@ -99,14 +105,14 @@ PC_geno_sym<-ggbarplot(
   add = c("jitter","mean_se_"),
   order = c("A","B","C","D","E","F","G","H","I"),
   position = position_dodge(.7)
-)
+)+ggtitle("Protein Carbonylation: Symbiotic")
 
 PC_geno_apo<-ggbarplot(
   apo_pc, x ="Genotype", y = "PC",color = "Treatment",
   add = c("jitter","mean_se_"),
   order = c("J","K","L","M","N","O","P","Q","R"),
   position = position_dodge(.7)
-)
+)+ggtitle("Protein Carbonylation: Aposymbiotic")
 
 #Lipid peroxidation graphical representation
 LP_treatment<-ggbarplot(
@@ -115,8 +121,7 @@ LP_treatment<-ggbarplot(
   position = position_dodge(.7)
 ) +ggtitle("Lipid Peroxidation")
 
-LP_treatment
-LP_treatment + labs( y = "Intensity", x = "Treatments")+theme(legend.position = "none")
+LP_treatment<-LP_treatment + labs( y = "Intensity", x = "Treatments")+theme(legend.position = "none")
 
 
 sym_lp<-LP_dot%>%group_by(Treatment)%>%
@@ -130,59 +135,36 @@ LP_geno_sym<-ggbarplot(
   sym_lp, x ="Genotype", y = "LP",color = "Treatment" ,
   add = c("jitter","mean_se_"),
   order = c("A","B","C","D","E","F","G","H","I"),
-  position = position_dodge(.7)
-)
+  position = position_dodge(.7),
+  ylab = "Intensity"
+)+ggtitle("Lipid Peroxidation:Symbiotic")
 
 LP_geno_apo<-ggbarplot(
   apo_lp, x ="Genotype", y = "LP",color = "Treatment",
   add = c("jitter","mean_se_"),
   order = c("J","K","L","M","N","O","P","Q","R"),
-  position = position_dodge(.7)
-)
+  position = position_dodge(.7),
+  ylab = "Intensity"
+)+ggtitle("Lipid Peroxidation:Aposymbiotic")
+
+#******************************ROS stats****************DD,PC,LP*****
+
 
 LP_anov<-aov(LP~Treatment+Symbiont, data = LP_dot)
 summary(LP_anov)
 
-#*Combination of Genotype & Treatment
+#*Combination of Genotype & Treatment, genotype and Treatment treated as combo
+
 LP_anov2<-aov(LP~Genotype*Treatment, data = apo_lp)
-
 summary(LP_anov2)
+tkLP<-TukeyHSD(LP_anov2)
 
-tukey<-TukeyHSD(LP_anov2)
-tukey
+DD_basic<-aov(DD~Treatment+Symbiont, data = DD_dot)
+summary(DD_basic)
+
+DD_anov<-aov(DD~Genotype*Treatment, data = sym_dd)
+summary(DD_anov)
+tkDD<-TukeyHSD(DD_anov)
 
 
 
-
-
-```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(tmp_graph)
-plot(PC_treatment)
-plot(PC_geno_apo)
-plot(PC_geno_sym)
-plot(LP_treatment)
-plot(LP_geno_apo)
-plot(LP_geno_sym)
-plot(DD_treatment)
-plot(DD_geno_apo)
-plot(DD_geno_sym)
-plot(DO_graph)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
